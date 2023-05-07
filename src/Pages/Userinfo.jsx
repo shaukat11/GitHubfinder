@@ -3,20 +3,27 @@ import { useContext, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Loading from "../Components/User/Loading";
 import Reposlist from "../Components/Repos/Reposlist";
-
 import GithubContext from "../Context/Github/GithubContext";
+import { getUsersAndRepos } from "../Context/Github/GithubAction";
 
 function Userinfo() {
-  const { SingleUser, user, loading, UserRepos, repos_of_users } =
-    useContext(GithubContext);
+  const { user, loading, repos_of_users, dispatch } = useContext(GithubContext);
 
   const params = useParams();
 
   useEffect(() => {
-    SingleUser(params.login);
-    UserRepos(params.login);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    dispatch({ type: "SET_USERS" });
+
+    const getUserData = async () => {
+      const getSingleUserData = await getUsersAndRepos(params.login);
+      dispatch({
+        type: "SINGLE_USER_REPOS",
+        payload: getSingleUserData,
+      });
+    };
+
+    getUserData();
+  }, [dispatch, params]);
 
   const {
     name,

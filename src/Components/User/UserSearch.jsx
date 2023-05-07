@@ -2,23 +2,30 @@ import React from "react";
 import { useState, useContext } from "react";
 import GithubContext from "../../Context/Github/GithubContext";
 import AlertContext from "../../Context/Alert/AlertContext";
+import { searchUser } from "../../Context/Github/GithubAction";
 
 function UserSearch() {
   const [text, setText] = useState("");
-  const { users, searchUser, clearUsers } = useContext(GithubContext);
+  const { users, dispatch } = useContext(GithubContext);
   const { setAlert } = useContext(AlertContext);
 
   // Getting text for search user
   const handlechange = (e) => setText(e.target.value);
 
   // Searching for user
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (text === "") {
       setAlert("Please Enter User to search", "ERROR");
     } else {
-      searchUser(text);
+      dispatch({ type: "SET_USERS" });
+      const users = await searchUser(text);
+      dispatch({
+        type: "GET_USERS",
+        payload: users,
+      });
+
       setText("");
     }
   };
@@ -48,7 +55,14 @@ function UserSearch() {
       </div>
       {users.length > 0 && (
         <div>
-          <button onClick={clearUsers} className="btn btn-ghost btn-lg">
+          <button
+            onClick={() => {
+              dispatch({
+                type: "CLEAR_USER",
+              });
+            }}
+            className="btn btn-ghost btn-lg"
+          >
             Clear
           </button>
         </div>

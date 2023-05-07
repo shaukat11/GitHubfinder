@@ -7,10 +7,11 @@ const githubReducer = (state, action) => {
         loading: false,
       };
 
-    case "SINGLE_USER":
+    case "SINGLE_USER_REPOS":
       return {
         ...state,
-        user: action.payload,
+        user: action.payload.user,
+        repos: action.payload.repos,
         loading: false,
       };
 
@@ -18,13 +19,6 @@ const githubReducer = (state, action) => {
       return {
         ...state,
         loading: true,
-      };
-
-    case "USER_REPOS":
-      return {
-        ...state,
-        repos_of_user: action.paylaod,
-        loading: false,
       };
 
     case "CLEAR_USER":
